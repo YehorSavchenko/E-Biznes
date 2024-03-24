@@ -16,4 +16,16 @@ RUN cd /tmp && \
 
 ENV PATH $PATH:/opt/kotlinc/bin
 
-CMD ["sh", "-c", "java -version && kotlinc -version"]
+RUN wget https://services.gradle.org/distributions/gradle-8.7-bin.zip -P /tmp && \
+    unzip -d /opt/gradle /tmp/gradle-*.zip && \
+    rm /tmp/gradle-*.zip
+
+ENV PATH $PATH:/opt/gradle/gradle-8.7/bin
+
+COPY build.gradle /home/gradle/project/
+
+WORKDIR /home/gradle/project
+
+RUN gradle build
+
+CMD ["sh", "-c", "java -version && kotlinc -version && gradle --version"]
