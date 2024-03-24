@@ -22,10 +22,10 @@ RUN wget https://services.gradle.org/distributions/gradle-8.7-bin.zip -P /tmp &&
 
 ENV PATH $PATH:/opt/gradle/gradle-8.7/bin
 
-COPY build.gradle /home/gradle/project/
+COPY . /home/gradle/project/
 
 WORKDIR /home/gradle/project
 
 RUN gradle build
 
-CMD ["sh", "-c", "java -version && kotlinc -version && gradle --version"]
+CMD ["gradle", "run"]
