@@ -1,10 +1,19 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:20.04
-
-ARG DEBIAN_FRONTEND=noninteractive
+FROM ubuntu:22.04
 
 #install app dependecies
-RUN apt-get update && apt-get install -y python3.8
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk wget unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set python3.8 as default for python3 command
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+RUN cd /tmp && \
+    wget https://github.com/JetBrains/kotlin/releases/download/v1.9.23/kotlin-compiler-1.9.23.zip && \
+    unzip kotlin-compiler-*.zip -d /opt && \
+    rm kotlin-compiler-*.zip
+
+ENV PATH $PATH:/opt/kotlinc/bin
+
+CMD ["sh", "-c", "java -version && kotlinc -version"]
