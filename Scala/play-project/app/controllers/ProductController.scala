@@ -20,4 +20,25 @@ class ProductController @Inject()(cc: ControllerComponents) extends AbstractCont
     }
   }
 
+  def addProduct = Action(parse.json) { request =>
+    request.body.validate[Product].map { product =>
+      Product.add(product)
+      Created(Json.toJson(product))
+    }.getOrElse(BadRequest("Invalid JSON"))
+  }
+
+  def updateProduct(id: Long) = Action(parse.json) { request =>
+    request.body.validate[Product].map { product =>
+      Product.update(id, product) match {
+        case Some(p) => Ok(Json.toJson(p))
+        case None => NotFound
+      }
+    }.getOrElse(BadRequest("Invalid JSON"))
+  }
+
+  def deleteProduct(id: Long) = Action {
+    Product.delete(id)
+    NoContent
+  }
+
 }

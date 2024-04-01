@@ -19,4 +19,14 @@ object Product {
   def delete(id: Long): Unit = {
     products = products.filterNot(_.id == id)
   }
+
+  def update(id: Long, product: Product): Option[Product] = {
+    val index = products.indexWhere(_.id == id)
+    if (index == -1) None
+    else {
+      products = products.updated(index, product)
+      Some(product)
+    }
+  }
+
 }
