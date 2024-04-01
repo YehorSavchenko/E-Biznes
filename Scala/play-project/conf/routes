@@ -14,3 +14,12 @@ GET     /products/:id               controllers.ProductController.showProduct(id
 POST    /products                   controllers.ProductController.addProduct
 PUT     /products/:id               controllers.ProductController.updateProduct(id: Long)
 DELETE  /products/:id               controllers.ProductController.deleteProduct(id: Long)
+
+GET     /categories                  controllers.CategoryController.listCategories
+POST    /categories                  controllers.CategoryController.addCategory
+PUT     /categories/:id              controllers.CategoryController.updateCategory(id: Long)
+DELETE  /categories/:id              controllers.CategoryController.deleteCategory(id: Long)
+
+GET     /cart                        controllers.CartController.showCart
+POST    /cart/items                  controllers.CartController.addItemToCart
+DELETE  /cart/items/:productId       controllers.CartController.removeItemFromCart(productId: Long)

@@ -5,7 +5,8 @@ import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
 import javax.inject._
 
-class ProductController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+@Singleton
+class ProductController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
   implicit val productFormat: OFormat[Product] = Json.format[Product]
 
   def listProducts = Action {
