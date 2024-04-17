@@ -19,6 +19,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 val categories = listOf("Electronics", "Books", "Clothing")
 
+val products = mapOf(
+    "Electronics" to listOf("Camera", "Smartphone", "TV"),
+    "Books" to listOf("Fiction", "Non-fiction", "Science"),
+    "Clothing" to listOf("Shirts", "Jeans", "Jackets")
+)
+
 fun main() {
     val jda = JDABuilder.createDefault("MTIzMDExNzEyNTM0ODM5Mjk4Ng.Gl8BSB.h7UMUhsbcGYImo58M0SWNkQgN8WbUHYeZjLXxw")
         .addEventListeners(BotListener())
@@ -41,6 +47,16 @@ fun main() {
 
             get("/categories") {
                 call.respondText(categories.toString())
+            }
+
+            get("/products/{category}") {
+                val category = call.parameters["category"]
+                val productList = products[category]
+                if (productList != null) {
+                    call.respondText(productList.toString())
+                } else {
+                    call.respondText("Category not found", status = HttpStatusCode.NotFound)
+                }
             }
         }
     }.start(wait = true)
@@ -66,6 +82,18 @@ class BotListener : ListenerAdapter() {
                     }
                 }
             }
+            message.startsWith("!products ") -> {
+                val categoryName = message.removePrefix("!products ").trim()
+                channel.sendMessage("Fetching products for category: $categoryName...").queue()
+                GlobalScope.launch {
+                    try {
+                        val products = fetchProducts(categoryName)
+                        channel.sendMessage("Products in $categoryName: $products").queue()
+                    } catch (e: Exception) {
+                        channel.sendMessage("Error fetching products for category '$categoryName': ${e.message}").queue()
+                    }
+                }
+            }
         }
     }
 }
@@ -77,6 +105,18 @@ suspend fun fetchCategories(): String {
         response.bodyAsText()
     } catch (e: Exception) {
         "Failed to fetch categories: ${e.message}"
+    } finally {
+        client.close()
+    }
+}
+
+suspend fun fetchProducts(categoryName: String): String {
+    val client = HttpClient(CIO)
+    return try {
+        val response: HttpResponse = client.get("http://localhost:8080/products/$categoryName")
+        response.bodyAsText()
+    } catch (e: Exception) {
+        "Failed to fetch products for category '$categoryName': ${e.message}"
     } finally {
         client.close()
     }

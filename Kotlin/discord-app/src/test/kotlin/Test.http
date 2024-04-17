@@ -1,3 +1,7 @@
+GET http://localhost:8080/products/Books
+Accept: application/json
+
+###
 GET http://localhost:8080/categories
 Accept: application/json
 
