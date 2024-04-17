@@ -1,0 +1,7 @@
+POST http://localhost:8080/send-message
+Content-Type: application/json
+
+###
+GET http://localhost:8080
+Accept: application/json
+
