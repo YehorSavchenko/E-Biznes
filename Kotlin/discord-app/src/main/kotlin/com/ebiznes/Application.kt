@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 fun main() {
-    val jda = JDABuilder.createDefault("MTIzMDA4MDkxODM3MTMwMzQ2NA.GilO7h.dC847uiRzZZC6b515524SL0YGFWvcMD9AaLq6Q")
+    val jda = JDABuilder.createDefault("MTIzMDExNzEyNTM0ODM5Mjk4Ng.Gl8BSB.h7UMUhsbcGYImo58M0SWNkQgN8WbUHYeZjLXxw")
         .addEventListeners(BotListener())
         .build()
         .awaitReady()
@@ -36,6 +36,13 @@ fun main() {
 class BotListener : ListenerAdapter() {
     override fun onMessageReceived(event: MessageReceivedEvent) {
         if (event.author.isBot) return
-        println("Received message: ${event.message}")
+
+        val message = event.message.contentDisplay
+        val channel = event.channel
+        println("Message : " + event.message.contentDisplay)
+
+        if (message.startsWith("!hello")) {
+            channel.sendMessage("Hello ${event.author.asMention}! How can I help you?").queue()
+        }
     }
 }
