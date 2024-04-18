@@ -22,6 +22,11 @@ func main() {
 	e.PUT("/products/:id", updateProduct)
 	e.DELETE("/products/:id", deleteProduct)
 
+	e.POST("/carts", createCart)
+	e.GET("/carts/:id", getCart)
+	e.POST("/carts/:id/items", addItem)
+	e.DELETE("/carts/:id/items/:itemId", removeItem)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -79,4 +84,72 @@ func deleteProduct(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, result.Error)
 	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "Product deleted"})
+}
+
+func createCart(c echo.Context) error {
+	var cart = new(models.Cart)
+	if err := c.Bind(cart); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart data"})
+	}
+
+	result := database.DB.Create(cart)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, cart)
+}
+
+func getCart(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart ID"})
+	}
+
+	cart := new(models.Cart)
+	result := database.DB.Preload("Items").Preload("Items.Product").First(cart, id)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+
+	return c.JSON(http.StatusOK, cart)
+}
+
+func addItem(c echo.Context) error {
+	cartID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart ID"})
+	}
+
+	item := new(models.CartItem)
+	if err := c.Bind(item); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid item data"})
+	}
+	item.CartID = uint(cartID)
+
+	result := database.DB.Create(item)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, item)
+}
+
+func removeItem(c echo.Context) error {
+	cartID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart ID"})
+	}
+
+	itemID, err := strconv.Atoi(c.Param("itemId"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid item ID"})
+	}
+
+	result := database.DB.Where("cart_id = ?", cartID).Delete(&models.CartItem{}, itemID)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"message": "Item removed"})
 }

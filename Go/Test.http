@@ -12,9 +12,9 @@ POST http://localhost:8080/products
 Content-Type: application/json
 
 {
-  "Name": "Nowy Produkt2",
-  "Description": "Opis2...",
-  "Price": 992.99
+  "Name": "Nowy Produkt1",
+  "Description": "Opis1...",
+  "Price": 99.991
 }
 
 ###
@@ -34,3 +34,27 @@ DELETE http://localhost:8080/products/1
 
 ###
 
+POST http://localhost:8080/carts
+Content-Type: application/json
+
+{}
+
+###
+
+GET http://localhost:8080/carts/1
+
+###
+
+POST http://localhost:8080/carts/1/items
+Content-Type: application/json
+
+{
+  "ProductID": 2,
+  "Quantity": 3
+}
+
+###
+
+DELETE http://localhost:8080/carts/1/items/1
+
+###
