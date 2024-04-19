@@ -27,14 +27,20 @@ func main() {
 	e.POST("/carts/:id/items", addItem)
 	e.DELETE("/carts/:id/items/:itemId", removeItem)
 
+	e.POST("/categories", createCategory)
+	e.GET("/categories", getCategories)
+	e.GET("/categories/:id", getCategory)
+	e.PUT("/categories/:id", updateCategory)
+	e.DELETE("/categories/:id", deleteCategory)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
 func getProducts(c echo.Context) error {
 	var products []models.Product
-	result := database.DB.Find(&products)
+	result := database.DB.Preload("Category").Find(&products)
 	if result.Error != nil {
-		return c.JSON(http.StatusInternalServerError, result.Error)
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
 	}
 	return c.JSON(http.StatusOK, products)
 }
@@ -42,7 +48,7 @@ func getProducts(c echo.Context) error {
 func getProduct(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	product := new(models.Product)
-	result := database.DB.First(&product, id)
+	result := database.DB.Preload("Category").First(&product, id)
 	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, result.Error)
 	}
@@ -55,22 +61,37 @@ func createProduct(c echo.Context) error {
 		return err
 	}
 
-	result := database.DB.Create(&product)
+	if product.CategoryID != 0 {
+		var category models.Category
+		if err := database.DB.First(&category, product.CategoryID).Error; err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": "Category not found"})
+		}
+	}
+
+	result := database.DB.Preload("Category").Create(&product)
 	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, result.Error)
 	}
 
-	return c.JSON(http.StatusOK, product)
+	return c.JSON(http.StatusCreated, product)
 }
 
 func updateProduct(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	product := new(models.Product)
-	if err := c.Bind(product); err != nil {
+	var product models.Product
+	if err := c.Bind(&product); err != nil {
 		return err
 	}
 	product.ID = uint(id)
-	result := database.DB.Save(&product)
+
+	if product.CategoryID != 0 {
+		var category models.Category
+		if err := database.DB.First(&category, product.CategoryID).Error; err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": "Category not found"})
+		}
+	}
+
+	result := database.DB.Preload("Category").Save(&product)
 	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, result.Error)
 	}
@@ -152,4 +173,58 @@ func removeItem(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{"message": "Item removed"})
+}
+
+func createCategory(c echo.Context) error {
+	var category models.Category
+	if err := c.Bind(&category); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid category data"})
+	}
+	result := database.DB.Create(&category)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+	return c.JSON(http.StatusCreated, category)
+}
+
+func getCategories(c echo.Context) error {
+	var categories []models.Category
+	result := database.DB.Find(&categories)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+	return c.JSON(http.StatusOK, categories)
+}
+
+func getCategory(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var category models.Category
+	result := database.DB.First(&category, id)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+	return c.JSON(http.StatusOK, category)
+}
+
+func updateCategory(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var category models.Category
+	if err := c.Bind(&category); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid category data"})
+	}
+	category.ID = uint(id)
+	result := database.DB.Save(&category)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+	return c.JSON(http.StatusOK, category)
+}
+
+func deleteCategory(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	result := database.DB.Delete(&models.Category{}, id)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+	return c.JSON(http.StatusOK, echo.Map{"message": "Category deleted"})
 }

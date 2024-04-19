@@ -12,9 +12,10 @@ POST http://localhost:8080/products
 Content-Type: application/json
 
 {
-  "Name": "Nowy Produkt1",
-  "Description": "Opis1...",
-  "Price": 99.991
+  "Name": "Nowy Produkt",
+  "Description": "Opis produktu",
+  "Price": 99.99,
+  "CategoryID": 1
 }
 
 ###
@@ -25,7 +26,8 @@ Content-Type: application/json
 {
   "Name": "Zaktualizowany Produkt",
   "Description": "Zaktualizowany opis...",
-  "Price": 109.99
+  "Price": 109.99,
+  "CategoryID": 1
 }
 
 ###
@@ -58,3 +60,36 @@ Content-Type: application/json
 DELETE http://localhost:8080/carts/1/items/1
 
 ###
+
+POST http://localhost:8080/categories
+Content-Type: application/json
+
+{
+  "Name": "Elektronika",
+  "Description": "Wszystko co związane z elektroniką"
+}
+
+###
+
+GET http://localhost:8080/categories
+
+###
+
+GET http://localhost:8080/categories/1
+
+###
+
+PUT http://localhost:8080/categories/1
+Content-Type: application/json
+
+{
+  "Name": "Nowa Elektronika",
+  "Description": "Zaktualizowany opis dla kategorii"
+}
+
+###
+
+DELETE http://localhost:8080/categories/1
+
+###
+
