@@ -38,7 +38,28 @@ func main() {
 
 func getProducts(c echo.Context) error {
 	var products []models.Product
-	result := database.DB.Preload("Category").Find(&products)
+	minPriceParam := c.QueryParam("minPrice")
+	categoryParam := c.QueryParam("category")
+	sortField := c.QueryParam("sortField")
+	sortDesc := c.QueryParam("sortDesc") == "true"
+
+	query := database.DB.Model(&models.Product{}).Preload("Category")
+
+	if minPriceParam != "" {
+		if minPrice, err := strconv.ParseFloat(minPriceParam, 64); err == nil {
+			query = query.Scopes(models.MinPrice(minPrice))
+		}
+	}
+	if categoryParam != "" {
+		if categoryID, err := strconv.Atoi(categoryParam); err == nil {
+			query = query.Scopes(models.ByCategory(uint(categoryID)))
+		}
+	}
+	if sortField != "" {
+		query = query.Scopes(models.SortProducts(sortField, sortDesc))
+	}
+
+	result := query.Find(&products)
 	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
 	}

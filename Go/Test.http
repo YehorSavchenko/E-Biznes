@@ -1,6 +1,6 @@
 ###
 
-GET http://localhost:8080/products
+GET http://localhost:8080/products?minPrice=50&category=1&sortField=price&sortDesc=false
 
 ###
 
@@ -14,7 +14,7 @@ Content-Type: application/json
 {
   "Name": "Nowy Produkt",
   "Description": "Opis produktu",
-  "Price": 99.99,
+  "Price": 999.99,
   "CategoryID": 1
 }
 
