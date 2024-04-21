@@ -7,12 +7,19 @@ import (
 	"go-app/models"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func main() {
 	database.ConnectDataBase()
 
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
@@ -32,6 +39,9 @@ func main() {
 	e.GET("/categories/:id", getCategory)
 	e.PUT("/categories/:id", updateCategory)
 	e.DELETE("/categories/:id", deleteCategory)
+
+	e.POST("/payment", processPayment)
+	e.GET("/payment", getPayment)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
@@ -248,4 +258,31 @@ func deleteCategory(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
 	}
 	return c.JSON(http.StatusOK, echo.Map{"message": "Category deleted"})
+}
+
+func processPayment(c echo.Context) error {
+	var payment models.Payment
+
+	if err := c.Bind(&payment); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid payment data"})
+	}
+
+	payment.Status = "Completed"
+	payment.PaymentDate = time.Now()
+
+	result := database.DB.Create(&payment)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"message": "Payment processed successfully", "paymentID": payment.ID})
+}
+
+func getPayment(c echo.Context) error {
+	var payment []models.Payment
+	result := database.DB.Find(&payment)
+	if result.Error != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
+	}
+	return c.JSON(http.StatusOK, payment)
 }
