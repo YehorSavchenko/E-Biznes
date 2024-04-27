@@ -1,32 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { useCart } from './Context';
 
 function Cart() {
-    const [items, setItems] = useState([]);
-
-    const fetchCartItems = () => {
-        axios.get('http://localhost:8080/carts/1')
-            .then(response => {
-                setItems(response.data.Items);
-            })
-            .catch(error => {
-                console.error('Error fetching cart items:', error);
-            });
-    };
-
-    const removeItemFromCart = (itemId) => {
-        axios.delete(`http://localhost:8080/carts/1/items/${itemId}`)
-            .then(() => {
-                setItems(currentItems => currentItems.filter(item => item.ID !== itemId));
-            })
-            .catch(error => {
-                console.error('Error removing item from cart:', error);
-            });
-    };
-
-    useEffect(() => {
-        fetchCartItems();
-    }, []);
+    const { items, removeItemFromCart } = useCart();
 
     return (
         <div>

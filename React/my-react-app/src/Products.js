@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { useCart } from './Context';
 
 function Products() {
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        axios.get('http://localhost:8080/products')
-            .then(response => {
-                console.log("Received data:", response.data);
-                setProducts(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching products:', error);
-            });
-    }, []);
+    const { products, addItemToCart } = useCart();
+    const [quantity, setQuantity] = useState(1);
 
     return (
         <div>
@@ -23,7 +13,13 @@ function Products() {
                     <h2>{product.Name}</h2>
                     <p><strong>Opis:</strong> {product.Description}</p>
                     <p><strong>Cena:</strong> {product.Price} zł</p>
-                    <p><strong>Kategoria:</strong> {product.Category.Name}</p>
+                    <input
+                        type="number"
+                        value={quantity}
+                        onChange={e => setQuantity(Math.max(1, parseInt(e.target.value)))}
+                        min="1"
+                    />
+                    <button onClick={() => addItemToCart(product, quantity)}>Dodaj do koszyka</button>
                 </div>
             ))}
         </div>
