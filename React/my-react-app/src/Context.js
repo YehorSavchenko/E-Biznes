@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import api from './Api';
 
 const Context = createContext();
 
@@ -12,7 +12,7 @@ export const Provider = ({ children }) => {
     const [paymentStatus, setPaymentStatus] = useState(null);
 
     const fetchProducts = () => {
-        axios.get('http://localhost:8080/products')
+        api.get('http://localhost:8080/products')
             .then(response => {
                 setProducts(response.data);
                 setLoading(false);
@@ -24,7 +24,7 @@ export const Provider = ({ children }) => {
     };
 
     const fetchCartItems = () => {
-        axios.get('http://localhost:8080/carts/1')
+        api.get('http://localhost:8080/carts/1')
             .then(response => {
                 setItems(response.data.Items);
                 setLoading(false);
@@ -41,7 +41,7 @@ export const Provider = ({ children }) => {
             Quantity: quantity
         };
 
-        axios.post(`http://localhost:8080/carts/1/items`, item)
+        api.post(`http://localhost:8080/carts/1/items`, item)
             .then(() => {
                 fetchCartItems();
             })
@@ -51,7 +51,7 @@ export const Provider = ({ children }) => {
     };
 
     const removeItemFromCart = (itemId) => {
-        axios.delete(`http://localhost:8080/carts/1/items/${itemId}`)
+        api.delete(`http://localhost:8080/carts/1/items/${itemId}`)
             .then(() => {
                 fetchCartItems();
             })
@@ -61,7 +61,7 @@ export const Provider = ({ children }) => {
     };
 
     const processPayment = (paymentData) => {
-        axios.post('http://localhost:8080/payment', paymentData)
+        api.post('http://localhost:8080/payment', paymentData)
             .then(response => {
                 setPaymentStatus('Success');
             })
