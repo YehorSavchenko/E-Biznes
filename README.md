@@ -42,7 +42,7 @@ Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_s
 
 Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Kotlin/discord-app)
 
-Demo: [Demo]()
+Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_student_uj_edu_pl/EXK1xK_CfcRFsg17QVrOpZ0Bo6q8X4BTCDaQXfwEg0qIfw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=oGQFj8)
 
 **Zadanie 4** Go
 
@@ -58,4 +58,20 @@ Demo: [Demo]()
 
 Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Go)
 
-Demo: [Demo]()
+Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_student_uj_edu_pl/EZBLAgQgsGVFupnWOIHTd14BCkGlxRBk3p5UxBOqkmJgMg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=mAZey9)
+
+**Zadanie 5** React
+
+:white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/e1b8a83f091e249fb021f7fb1dede24389058e8c)
+
+:white_check_mark: 3.5 wymaganie 2 [Link do commita2 ](https://github.com/YehorSavchenko/E-Biznes/commit/c671d42654b0b05db1ec2d14c74c5bb138d599bd)
+
+:white_check_mark: 4.0 wymaganie 3 [Link do commita 3](https://github.com/YehorSavchenko/E-Biznes/commit/1210763f1c297a9b4b844366a7378903204cf791)
+
+:white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/9ebf987734dbcfe1d5753998d53e44c1e5a8ff8a)
+
+:white_check_mark: 5.0 wymaganie 5 [Link do commita 5](https://github.com/YehorSavchenko/E-Biznes/commit/ee2c5ca6f2eb42cda1068368a825caad3890527a)
+
+Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/React/my-react-app)
+
+Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_student_uj_edu_pl/EcNKBoMoL_9EhDKqu2--aioBvikzsOAAQ22od6Q4AuGlsg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=i5FYus)
