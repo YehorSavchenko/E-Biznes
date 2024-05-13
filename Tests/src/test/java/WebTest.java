@@ -27,8 +27,27 @@ public class WebTest {
     @Test
     public void testTextInput() {
         WebElement textBox = driver.findElement(By.name("my-text"));
+        assertEquals("", textBox.getAttribute("value"));
+        assertTrue(textBox.isEnabled(), "Text box should be enabled.");
+        assertEquals("1px solid rgb(206, 212, 218)", textBox.getCssValue("border"));
+        assertEquals("400", textBox.getCssValue("font-weight"));
         textBox.sendKeys("Test Input");
         assertEquals("Test Input", textBox.getAttribute("value"));
+        textBox.clear();
+        textBox.sendKeys("Another Test");
+        assertEquals("Another Test", textBox.getAttribute("value"));
+        assertEquals("", textBox.getAttribute("placeholder"));
+        assertEquals("solid", textBox.getCssValue("border-style"));
+    }
+
+    @Test
+    public void testTextInputWithSpecialCharacters() {
+        WebElement textBox = driver.findElement(By.name("my-text"));
+        String specialInput = "!@#$%^&*()_+{}|:\"<>?";
+        textBox.sendKeys(specialInput);
+        assertEquals(specialInput, textBox.getAttribute("value"));
+        textBox.clear();
+        assertEquals("", textBox.getAttribute("value"));
     }
 
     @Test
@@ -36,6 +55,8 @@ public class WebTest {
         WebElement passwordBox = driver.findElement(By.name("my-password"));
         passwordBox.sendKeys("password123");
         assertEquals("password123", passwordBox.getAttribute("value"));
+        assertEquals("password", passwordBox.getAttribute("type"));
+        assertEquals(11, passwordBox.getAttribute("value").length());
     }
 
     @Test
@@ -43,6 +64,21 @@ public class WebTest {
         WebElement textarea = driver.findElement(By.name("my-textarea"));
         textarea.sendKeys("Hello, this is a test.");
         assertEquals("Hello, this is a test.", textarea.getAttribute("value"));
+    }
+
+    @Test
+    public void testTextareaWithNewlines() {
+        WebElement textarea = driver.findElement(By.name("my-textarea"));
+        String multilineText = "Line 1\nLine 2\nLine 3";
+        textarea.sendKeys(multilineText);
+        assertEquals(multilineText, textarea.getAttribute("value"));
+    }
+
+    @Test
+    public void testElementStyles() {
+        WebElement header = driver.findElement(By.tagName("h1"));
+        assertEquals("start", header.getCssValue("text-align"), "Header text should be start");
+        assertEquals("rgba(33, 37, 41, 1)", header.getCssValue("color"));
     }
 
     @Test
@@ -68,8 +104,12 @@ public class WebTest {
     @Test
     public void testDropdown() {
         Select dropdown = new Select(driver.findElement(By.name("my-select")));
-        dropdown.selectByVisibleText("Two");
-        assertEquals("2", dropdown.getFirstSelectedOption().getAttribute("value"));
+        assertEquals(4, dropdown.getOptions().size());
+        for (WebElement option : dropdown.getOptions()) {
+            dropdown.selectByVisibleText(option.getText());
+            assertEquals(option.getAttribute("value"), dropdown.getFirstSelectedOption().getAttribute("value"));
+        }
+        assertEquals("Three", dropdown.getFirstSelectedOption().getText());
     }
 
     @Test
@@ -161,28 +201,47 @@ public class WebTest {
         WebElement returnToIndexLink = driver.findElement(By.linkText("Return to index"));
         returnToIndexLink.click();
 
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("overflow-body.html")));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("overflow-body.html")));
+
+        assertEquals("Index of Available Pages", driver.getTitle());
 
         WebElement overflowLink = driver.findElement(By.linkText("overflow-body.html"));
         overflowLink.click();
 
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.tagName("iframe")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("iframe")));
+        WebElement iframe = driver.findElement(By.tagName("iframe"));
+        assertTrue(iframe.isDisplayed());
 
-        assertTrue(driver.findElement(By.tagName("iframe")).isDisplayed(), "Iframe should be visible on 'overflow-body.html'");
+        assertTrue(driver.getCurrentUrl().contains("overflow-body.html"));
+
+        assertEquals("https://www.selenium.dev/selenium/web/xhtmlTest.html", iframe.getAttribute("src"));
     }
 
     @Test
     public void testContentOnOverflowBody() {
         driver.get("https://www.selenium.dev/selenium/web/overflow-body.html");
 
+        assertEquals("The Visibility of Everyday Things", driver.getTitle());
+
         WebElement image = driver.findElement(By.cssSelector("img[alt='a nice beach']"));
-        assertTrue(image.isDisplayed(), "Image with alt text 'a nice beach' should be displayed");
+        assertTrue(image.isDisplayed());
+
+        assertNotEquals(0, image.getSize().height);
+        assertNotEquals(0, image.getSize().width);
 
         WebElement iframe = driver.findElement(By.tagName("iframe"));
         driver.switchTo().frame(iframe);
-        assertTrue(driver.findElement(By.tagName("body")).getText().contains("XHTML Might Be The Future"),
-                "Text within the iframe should match expected content");
+
+        assertTrue(driver.findElement(By.tagName("body")).getText().contains("XHTML Might Be The Future"));
+
+        WebElement h1 = driver.findElement(By.tagName("h1"));
+        assertTrue(h1.isDisplayed());
+        assertEquals("XHTML Might Be The Future", h1.getText());
+
+        driver.switchTo().defaultContent();
+
+        assertTrue(driver.findElements(By.tagName("button")).isEmpty());
     }
 
     @AfterEach
