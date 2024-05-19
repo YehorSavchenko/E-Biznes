@@ -89,7 +89,7 @@ func getProduct(c echo.Context) error {
 func createProduct(c echo.Context) error {
 	var product models.Product
 	if err := c.Bind(&product); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid JSON payload"})
 	}
 
 	if product.CategoryID != 0 {
@@ -101,7 +101,7 @@ func createProduct(c echo.Context) error {
 
 	result := database.DB.Preload("Category").Create(&product)
 	if result.Error != nil {
-		return c.JSON(http.StatusInternalServerError, result.Error)
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, product)
@@ -111,9 +111,14 @@ func updateProduct(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	var product models.Product
 	if err := c.Bind(&product); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid request payload"})
 	}
 	product.ID = uint(id)
+
+	var existingProduct models.Product
+	if err := database.DB.Preload("Category").First(&existingProduct, id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, echo.Map{"error": "Product not found"})
+	}
 
 	if product.CategoryID != 0 {
 		var category models.Category
@@ -124,14 +129,20 @@ func updateProduct(c echo.Context) error {
 
 	result := database.DB.Preload("Category").Save(&product)
 	if result.Error != nil {
-		return c.JSON(http.StatusInternalServerError, result.Error)
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
 	}
 	return c.JSON(http.StatusOK, product)
 }
 
 func deleteProduct(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	result := database.DB.Delete(&models.Product{}, id)
+
+	var product models.Product
+	if err := database.DB.First(&product, id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, echo.Map{"error": "Product not found"})
+	}
+
+	result := database.DB.Delete(&product)
 	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, result.Error)
 	}
@@ -252,7 +263,10 @@ func updateCategory(c echo.Context) error {
 }
 
 func deleteCategory(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid Category ID"})
+	}
 	result := database.DB.Delete(&models.Category{}, id)
 	if result.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": result.Error.Error()})
