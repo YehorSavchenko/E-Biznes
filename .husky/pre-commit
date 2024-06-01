@@ -1,5 +1,10 @@
-#!/usr/bin/env sh
-. "${0%/*}/h"
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-sh ./run-golangci-lint.sh
-sh ./run-eslint.s
+cd Go
+golangci-lint run ./...
+cd ..
+
+cd React/my-react-app
+npm run lint
+cd ..

@@ -1,0 +1,15 @@
+run:
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - staticcheck
+
+issues:
+  exclude-rules:
+    - linters:
+        - errcheck
+      text: ".*error return value not checked.*"

@@ -52,13 +52,27 @@ func jsonPayload(v interface{}) *bytes.Buffer {
 
 func setupTestData() {
 	cleanUpTestData()
-	database.DB, _ = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	database.DB.AutoMigrate(&models.Product{}, &models.Category{}, &models.Cart{}, &models.CartItem{}, &models.Payment{})
+	var err error
+	database.DB, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect to the database")
+	}
+	if err := database.DB.AutoMigrate(&models.Product{}, &models.Category{}, &models.Cart{}, &models.CartItem{}, &models.Payment{}); err != nil {
+		panic("failed to migrate database")
+	}
 
-	database.DB.Create(&models.Product{Model: gorm.Model{ID: 1}, Name: "Initial Product", Description: "Initial Description", Price: 50.0})
-	database.DB.Create(&models.Product{Name: "Initial Product2", Description: "Initial Description2", Price: 50.0})
-	database.DB.Create(&models.Category{Name: "Initial Category", Description: "Initial Description"})
-	database.DB.Create(&models.Cart{UserID: 1})
+	if err := database.DB.Create(&models.Product{Model: gorm.Model{ID: 1}, Name: "Initial Product", Description: "Initial Description", Price: 50.0}).Error; err != nil {
+		panic("failed to create initial product")
+	}
+	if err := database.DB.Create(&models.Product{Name: "Initial Product2", Description: "Initial Description2", Price: 50.0}).Error; err != nil {
+		panic("failed to create initial product2")
+	}
+	if err := database.DB.Create(&models.Category{Name: "Initial Category", Description: "Initial Description"}).Error; err != nil {
+		panic("failed to create initial category")
+	}
+	if err := database.DB.Create(&models.Cart{UserID: 1}).Error; err != nil {
+		panic("failed to create initial cart")
+	}
 }
 
 func cleanUpTestData() {
@@ -81,7 +95,9 @@ func TestUpdateProduct(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("1")
 
-	updateProduct(c)
+	if err := updateProduct(c); err != nil {
+		t.Errorf("updateProduct error: %v", err)
+	}
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Body.String(), "Updated Product")
@@ -94,7 +110,9 @@ func TestUpdateProduct(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("99999")
 
-	updateProduct(c)
+	if err := updateProduct(c); err != nil {
+		t.Errorf("updateProduct error: %v", err)
+	}
 	assert.Equal(t, http.StatusNotFound, rec.Code)
 }
 
@@ -109,10 +127,11 @@ func TestDeleteProduct(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, deleteProduct(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Product deleted")
+	if err := deleteProduct(c); err != nil {
+		t.Errorf("deleteProduct error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Product deleted")
 
 	// Negative test case: Delete non-existent product
 	req = httptest.NewRequest(http.MethodDelete, "/products/9991", nil)
@@ -121,7 +140,9 @@ func TestDeleteProduct(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("9991")
 
-	deleteProduct(c)
+	if err := deleteProduct(c); err != nil {
+		t.Errorf("deleteProduct error: %v", err)
+	}
 	assert.Equal(t, http.StatusNotFound, rec.Code)
 	assert.Contains(t, rec.Body.String(), "Product not found")
 }
@@ -135,15 +156,16 @@ func TestGetProducts(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, getProducts(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Initial Product")
+	if err := getProducts(c); err != nil {
+		t.Errorf("getProducts error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Initial Product")
 
 	// Negative test case: Incorrect endpoint
 	req = httptest.NewRequest(http.MethodGet, "/wrongendpoint", nil)
 	rec = httptest.NewRecorder()
-	c = e.NewContext(req, rec)
+	_ = e.NewContext(req, rec)
 
 	e.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusNotFound, rec.Code)
@@ -160,10 +182,11 @@ func TestCreateProduct(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, createProduct(c)) {
-		assert.Equal(t, http.StatusCreated, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Test Product")
+	if err := createProduct(c); err != nil {
+		t.Errorf("createProduct error: %v", err)
 	}
+	assert.Equal(t, http.StatusCreated, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Test Product")
 
 	// Negative test case: Invalid payload
 	req = httptest.NewRequest(http.MethodPost, "/products", bytes.NewBufferString("{invalid json}"))
@@ -172,7 +195,9 @@ func TestCreateProduct(t *testing.T) {
 	c = e.NewContext(req, rec)
 
 	// Here, we don't expect a nil error, but the status code should be 400
-	createProduct(c)
+	if err := createProduct(c); err != nil {
+		t.Errorf("createProduct error: %v", err)
+	}
 	assert.Contains(t, rec.Body.String(), "Invalid JSON payload")
 }
 
@@ -187,19 +212,22 @@ func TestCreateCart(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, createCart(c)) {
-		assert.Equal(t, http.StatusCreated, rec.Code)
-		assert.Contains(t, rec.Body.String(), `"UserID":2`)
+	if err := createCart(c); err != nil {
+		t.Errorf("createCart error: %v", err)
 	}
+	assert.Equal(t, http.StatusCreated, rec.Code)
+	assert.Contains(t, rec.Body.String(), `"UserID":2`)
 
 	// Negative test case: Invalid payload
 	req = httptest.NewRequest(http.MethodPost, "/carts", bytes.NewBufferString("{invalid json}"))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
-	createCart(c)
-	assert.Equal(t, http.StatusBadRequest, rec.Code)
 
+	if err := createCart(c); err != nil {
+		t.Errorf("createCart error: %v", err)
+	}
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
 }
 
 func TestGetCart(t *testing.T) {
@@ -213,10 +241,11 @@ func TestGetCart(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, getCart(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), `"UserID":1`)
+	if err := getCart(c); err != nil {
+		t.Errorf("getCart error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), `"UserID":1`)
 
 	// Negative test case: Non-existent cart
 	req = httptest.NewRequest(http.MethodGet, "/carts/9992", nil)
@@ -225,9 +254,10 @@ func TestGetCart(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("9992")
 
-	getCart(c)
+	if err := getCart(c); err != nil {
+		t.Errorf("getCart error: %v", err)
+	}
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)
-
 }
 
 func TestAddItem(t *testing.T) {
@@ -243,10 +273,11 @@ func TestAddItem(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, addItem(c)) {
-		assert.Equal(t, http.StatusCreated, rec.Code)
-		assert.Contains(t, rec.Body.String(), `"Quantity":1`)
+	if err := addItem(c); err != nil {
+		t.Errorf("addItem error: %v", err)
 	}
+	assert.Equal(t, http.StatusCreated, rec.Code)
+	assert.Contains(t, rec.Body.String(), `"Quantity":1`)
 
 	// Negative test case: Invalid payload
 	req = httptest.NewRequest(http.MethodPost, "/carts/1/items", bytes.NewBufferString("{invalid json}"))
@@ -254,9 +285,10 @@ func TestAddItem(t *testing.T) {
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
-	addItem(c)
+	if err := addItem(c); err != nil {
+		t.Errorf("addItem error: %v", err)
+	}
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
-
 }
 
 func TestRemoveItem(t *testing.T) {
@@ -270,21 +302,23 @@ func TestRemoveItem(t *testing.T) {
 	c.SetParamNames("id", "itemId")
 	c.SetParamValues("1", "1")
 
-	if assert.NoError(t, removeItem(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Item removed")
+	if err := removeItem(c); err != nil {
+		t.Errorf("removeItem error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Item removed")
 
 	// Negative test case: Non-existent item
 	req = httptest.NewRequest(http.MethodDelete, "/carts/1/items/9993", nil)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 	c.SetParamNames("id", "itemId")
-	c.SetParamValues("1", "asdas")
+	c.SetParamValues("1", "9993")
 
-	removeItem(c)
+	if err := removeItem(c); err != nil {
+		t.Errorf("removeItem error: %v", err)
+	}
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
-
 }
 
 func TestCreateCategory(t *testing.T) {
@@ -298,10 +332,11 @@ func TestCreateCategory(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, createCategory(c)) {
-		assert.Equal(t, http.StatusCreated, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Test Category")
+	if err := createCategory(c); err != nil {
+		t.Errorf("createCategory error: %v", err)
 	}
+	assert.Equal(t, http.StatusCreated, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Test Category")
 
 	// Negative test case: Invalid payload
 	req = httptest.NewRequest(http.MethodPost, "/categories", bytes.NewBufferString("{invalid json}"))
@@ -309,9 +344,10 @@ func TestCreateCategory(t *testing.T) {
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
-	createCategory(c)
+	if err := createCategory(c); err != nil {
+		t.Errorf("createCategory error: %v", err)
+	}
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
-
 }
 
 func TestGetCategories(t *testing.T) {
@@ -323,19 +359,19 @@ func TestGetCategories(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, getCategories(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Initial Category")
+	if err := getCategories(c); err != nil {
+		t.Errorf("getCategories error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Initial Category")
 
 	// Negative test case: Incorrect endpoint
 	req = httptest.NewRequest(http.MethodGet, "/wrongendpoint", nil)
 	rec = httptest.NewRecorder()
-	c = e.NewContext(req, rec)
+	_ = e.NewContext(req, rec)
 
 	e.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusNotFound, rec.Code)
-
 }
 
 func TestUpdateCategory(t *testing.T) {
@@ -351,10 +387,11 @@ func TestUpdateCategory(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, updateCategory(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Updated Category")
+	if err := updateCategory(c); err != nil {
+		t.Errorf("updateCategory error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Updated Category")
 
 	req = httptest.NewRequest(http.MethodPut, "/categories/9994", bytes.NewBufferString("{invalid json}"))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -363,9 +400,10 @@ func TestUpdateCategory(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("9994")
 
-	updateCategory(c)
+	if err := updateCategory(c); err != nil {
+		t.Errorf("updateCategory error: %v", err)
+	}
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
-
 }
 
 func TestDeleteCategory(t *testing.T) {
@@ -379,21 +417,23 @@ func TestDeleteCategory(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("1")
 
-	if assert.NoError(t, deleteCategory(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Category deleted")
+	if err := deleteCategory(c); err != nil {
+		t.Errorf("deleteCategory error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Category deleted")
 
 	// Negative test case: Non-existent category
 	req = httptest.NewRequest(http.MethodDelete, "/categories/9995", nil)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 	c.SetParamNames("id")
-	c.SetParamValues("ab")
+	c.SetParamValues("9995")
 
-	deleteCategory(c)
+	if err := deleteCategory(c); err != nil {
+		t.Errorf("deleteCategory error: %v", err)
+	}
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
-
 }
 
 func TestProcessPayment(t *testing.T) {
@@ -413,10 +453,11 @@ func TestProcessPayment(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, processPayment(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), "Payment processed successfully")
+	if err := processPayment(c); err != nil {
+		t.Errorf("processPayment error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Payment processed successfully")
 
 	// Negative test case: Invalid payload
 	req = httptest.NewRequest(http.MethodPost, "/payment", bytes.NewBufferString("{invalid json}"))
@@ -424,9 +465,10 @@ func TestProcessPayment(t *testing.T) {
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
-	processPayment(c)
+	if err := processPayment(c); err != nil {
+		t.Errorf("processPayment error: %v", err)
+	}
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
-
 }
 
 func TestGetPayment(t *testing.T) {
@@ -438,17 +480,17 @@ func TestGetPayment(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	if assert.NoError(t, getPayment(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Contains(t, rec.Body.String(), `"TransactionID":"test-transaction"`)
+	if err := getPayment(c); err != nil {
+		t.Errorf("getPayment error: %v", err)
 	}
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), `"TransactionID":"test-transaction"`)
 
 	// Negative test case: Incorrect endpoint
 	req = httptest.NewRequest(http.MethodGet, "/wrongendpoint", nil)
 	rec = httptest.NewRecorder()
-	c = e.NewContext(req, rec)
+	_ = e.NewContext(req, rec)
 
 	e.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusNotFound, rec.Code)
-
 }
