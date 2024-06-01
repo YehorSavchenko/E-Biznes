@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "${0%/*}/h"
+
+sh ./run-golangci-lint.sh
+sh ./run-eslint.s
