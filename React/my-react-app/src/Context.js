@@ -1,4 +1,11 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
+import PropTypes from 'prop-types';
 import api from './Api';
 
 const Context = createContext();
@@ -81,15 +88,22 @@ export const Provider = ({ children }) => {
     fetchCartItems();
   }, []);
 
-  const value = {
-    items,
-    products,
-    addItemToCart,
-    removeItemFromCart,
-    processPayment,
-    paymentStatus,
-    loading,
-  };
+  const value = useMemo(
+    () => ({
+      items,
+      products,
+      addItemToCart,
+      removeItemFromCart,
+      processPayment,
+      paymentStatus,
+      loading,
+    }),
+    [items, products, paymentStatus, loading],
+  );
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
+};
+
+Provider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

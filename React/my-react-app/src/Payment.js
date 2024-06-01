@@ -15,14 +15,19 @@ function Payment() {
     <div>
       <h1>Płatność</h1>
       <form onSubmit={handleSubmit}>
-        <label>Kwota:</label>
+        <label htmlFor='amount'>Kwota:</label>
         <input
+          id='amount'
           type='number'
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
-        <label>Waluta:</label>
-        <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+        <label htmlFor='currency'>Waluta:</label>
+        <select
+          id='currency'
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value)}
+        >
           <option value='USD'>USD</option>
           <option value='EUR'>EUR</option>
         </select>

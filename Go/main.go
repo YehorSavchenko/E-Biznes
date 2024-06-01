@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	invalidCartId = "Invalid cart ID"
+)
+
 func main() {
 	//test changes asdasd asdasddassad
 	database.ConnectDataBase()
@@ -24,25 +28,25 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/products", getProducts)
-	e.GET("/products/:id", getProduct)
-	e.POST("/products", createProduct)
-	e.PUT("/products/:id", updateProduct)
-	e.DELETE("/products/:id", deleteProduct)
+	e.GET(productsEndpoint, getProducts)
+	e.GET(productsEndpoint+"/:id", getProduct)
+	e.POST(productsEndpoint, createProduct)
+	e.PUT(productsEndpoint+"/:id", updateProduct)
+	e.DELETE(productsEndpoint+"/:id", deleteProduct)
 
-	e.POST("/carts", createCart)
-	e.GET("/carts/:id", getCart)
-	e.POST("/carts/:id/items", addItem)
-	e.DELETE("/carts/:id/items/:itemId", removeItem)
+	e.POST(cartsEndpoint, createCart)
+	e.GET(cartsEndpoint+"/:id", getCart)
+	e.POST(cartsEndpoint+"/:id/items", addItem)
+	e.DELETE(cartsEndpoint+"/:id/items/:itemId", removeItem)
 
-	e.POST("/categories", createCategory)
-	e.GET("/categories", getCategories)
-	e.GET("/categories/:id", getCategory)
-	e.PUT("/categories/:id", updateCategory)
-	e.DELETE("/categories/:id", deleteCategory)
+	e.POST(categoriesEndpoint, createCategory)
+	e.GET(categoriesEndpoint, getCategories)
+	e.GET(categoriesEndpoint+"/:id", getCategory)
+	e.PUT(categoriesEndpoint+"/:id", updateCategory)
+	e.DELETE(categoriesEndpoint+"/:id", deleteCategory)
 
-	e.POST("/payment", processPayment)
-	e.GET("/payment", getPayment)
+	e.POST(paymentEndpoint, processPayment)
+	e.GET(paymentEndpoint, getPayment)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
@@ -167,7 +171,7 @@ func createCart(c echo.Context) error {
 func getCart(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart ID"})
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": invalidCartId})
 	}
 
 	cart := new(models.Cart)
@@ -182,7 +186,7 @@ func getCart(c echo.Context) error {
 func addItem(c echo.Context) error {
 	cartID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart ID"})
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": invalidCartId})
 	}
 
 	item := new(models.CartItem)
@@ -202,7 +206,7 @@ func addItem(c echo.Context) error {
 func removeItem(c echo.Context) error {
 	cartID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid cart ID"})
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": invalidCartId})
 	}
 
 	itemID, err := strconv.Atoi(c.Param("itemId"))
