@@ -75,3 +75,27 @@ Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_s
 Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/React/my-react-app)
 
 Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_student_uj_edu_pl/EcNKBoMoL_9EhDKqu2--aioBvikzsOAAQ22od6Q4AuGlsg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=i5FYus)
+
+**Zadanie 6** Testy
+
+:white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/b12932f3126281b0af874efcdfc0c822211032ad)
+
+:white_check_mark: 3.5 wymaganie 2 [Link do commita2 ](https://github.com/YehorSavchenko/E-Biznes/commit/7d2d45d7e11973fb466b3cd12d053f299f15a813)
+
+:white_check_mark: 4.0 wymaganie 3 [Link do commita 3](https://github.com/YehorSavchenko/E-Biznes/commit/16a93203173b6d9f09832f3d186d8a8007cf0fbf)
+
+:white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/100191bc3d747004e73f538b8cea407fbdf7a44d)
+
+Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Tests)
+
+**Zadanie 6** Sonar
+
+:white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
+
+:white_check_mark: 3.5 wymaganie 2 [Link do commita2 ](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
+
+:white_check_mark: 4.0 wymaganie 3 [Link do commita 3](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
+
+:white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
+
+:white_check_mark: 5 wymaganie 5 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
