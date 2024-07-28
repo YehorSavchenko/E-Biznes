@@ -88,7 +88,7 @@ Demo: [Demo](https://ujchmura-my.sharepoint.com/:v:/g/personal/yehor_savchenko_s
 
 Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Tests)
 
-**Zadanie 6** Sonar
+**Zadanie 7** Sonar
 
 :white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
 
@@ -99,3 +99,20 @@ Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Tests)
 :white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
 
 :white_check_mark: 5 wymaganie 5 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/481e245efa9ae404921b5295088bf07adce2f7a1)
+
+
+**Zadanie 8** Oauth2
+
+:white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/2497e0bcd51249281562ffcc469b965069269514)
+
+:white_check_mark: 3.5 wymaganie 2 [Link do commita2 ](https://github.com/YehorSavchenko/E-Biznes/commit/2497e0bcd51249281562ffcc469b965069269514)
+
+:white_check_mark: 4.0 wymaganie 3 [Link do commita 3](https://github.com/YehorSavchenko/E-Biznes/commit/173b410e3f8696bf09cdf10e002ccabede4385e5)
+
+:white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/7449c33681763919cefa781e30774ff550b4b990)
+
+:white_check_mark: 5.0 wymaganie 5 [Link do commita 5](https://github.com/YehorSavchenko/E-Biznes/commit/7449c33681763919cefa781e30774ff550b4b990)
+
+Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Oauth2)
+
+Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/oauth2.mp4)
