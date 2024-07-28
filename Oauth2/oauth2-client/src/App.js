@@ -39,6 +39,10 @@ function App() {
         window.location.href = 'http://localhost:5000/auth/google';
     };
 
+    const loginWithGitHub = () => {
+        window.location.href = 'http://localhost:5000/auth/github';
+    };
+
     return (
         <div>
             <h1>Register</h1>
@@ -73,6 +77,7 @@ function App() {
 
             <h1>Or</h1>
             <button onClick={loginWithGoogle}>Login with Google</button>
+            <button onClick={loginWithGitHub}>Login with GitHub</button>
         </div>
     );
 }
