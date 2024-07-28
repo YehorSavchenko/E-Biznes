@@ -5,13 +5,18 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+app.use(passport.initialize());
 
 const PORT = 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
 // Initialize SQLite database
 const db = new sqlite3.Database(':memory:');
@@ -19,6 +24,39 @@ const db = new sqlite3.Database(':memory:');
 db.serialize(() => {
     db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT UNIQUE, password TEXT, token TEXT)");
 });
+
+// Passport configuration
+passport.use(new GoogleStrategy({
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:5000/auth/google/callback"
+    },
+    (accessToken, refreshToken, profile, done) => {
+        db.get("SELECT * FROM users WHERE username = ?", [profile.id], (err, user) => {
+            if (err) return done(err);
+
+            if (user) {
+                const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+                db.run("UPDATE users SET token = ? WHERE id = ?", [token, user.id], (err) => {
+                    if (err) return done(err);
+                    return done(null, { token });
+                });
+            } else {
+                const newUser = { username: profile.id, password: '', token: '' };
+                const stmt = db.prepare("INSERT INTO users (username) VALUES (?)");
+                stmt.run(profile.id, function (err) {
+                    if (err) return done(err);
+
+                    const token = jwt.sign({ userId: this.lastID, username: profile.id }, JWT_SECRET, { expiresIn: '1h' });
+                    db.run("UPDATE users SET token = ? WHERE id = ?", [token, this.lastID], (err) => {
+                        if (err) return done(err);
+                        return done(null, { token });
+                    });
+                });
+                stmt.finalize();
+            }
+        });
+    }));
 
 // Registration endpoint
 app.post('/register', (req, res) => {
@@ -57,6 +95,16 @@ app.post('/login', (req, res) => {
         });
     });
 });
+
+// Google OAuth2 routes
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { session: false }),
+    (req, res) => {
+        res.redirect(`http://localhost:3000?token=${req.user.token}`);
+    }
+);
 
 // Endpoint do sprawdzania danych użytkownika (do testów)
 app.get('/users', (req, res) => {

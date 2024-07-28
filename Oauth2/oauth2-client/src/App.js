@@ -35,6 +35,10 @@ function App() {
         }
     };
 
+    const loginWithGoogle = () => {
+        window.location.href = 'http://localhost:5000/auth/google';
+    };
+
     return (
         <div>
             <h1>Register</h1>
@@ -66,6 +70,9 @@ function App() {
                 onChange={(e) => setLoginPassword(e.target.value)}
             />
             <button onClick={login}>Login</button>
+
+            <h1>Or</h1>
+            <button onClick={loginWithGoogle}>Login with Google</button>
         </div>
     );
 }
