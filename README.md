@@ -116,3 +116,19 @@ Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Tests)
 Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Oauth2)
 
 Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/oauth2.mp4)
+
+**Zadanie 9** ChatBot
+
+:white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/68475da979fff150ae3b389de5bfbd2b59d8e234)
+
+:white_check_mark: 3.5 wymaganie 2 [Link do commita2 ](https://github.com/YehorSavchenko/E-Biznes/commit/68475da979fff150ae3b389de5bfbd2b59d8e234)
+
+:white_check_mark: 4.0 wymaganie 3 [Link do commita 3](https://github.com/YehorSavchenko/E-Biznes/commit/b39590d5bf71d829413379d0cd1d3d768307f3d7)
+
+:white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/b39590d5bf71d829413379d0cd1d3d768307f3d7)
+
+:white_check_mark: 5.0 wymaganie 5 [Link do commita 5](https://github.com/YehorSavchenko/E-Biznes/commit/b39590d5bf71d829413379d0cd1d3d768307f3d7)
+
+Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Bot)
+
+Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/bot.mp4)
