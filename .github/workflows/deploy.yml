@@ -61,4 +61,3 @@ jobs:
           to: recipient@example.com
           from: ${{ secrets.EMAIL_USERNAME }}
           secure: true
-          tls: true
