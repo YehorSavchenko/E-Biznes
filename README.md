@@ -135,4 +135,14 @@ Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/bot.mp
 
 **Zadanie 10** Cloud
 
-:white_check_mark: 3.0 wymaganie 1
+:white_check_mark: 3.0 wymaganie 1 [Link do commita 1](https://github.com/YehorSavchenko/E-Biznes/commit/1a6f3d0b342b90cb4e194a45fa68ce91c107be9a)
+
+:white_check_mark: 3.5 wymaganie 2 [Link do commita2 ](https://github.com/YehorSavchenko/E-Biznes/commit/1a6f3d0b342b90cb4e194a45fa68ce91c107be9a)
+
+:white_check_mark: 4.0 wymaganie 3 [Link do commita 3](https://github.com/YehorSavchenko/E-Biznes/commit/1a6f3d0b342b90cb4e194a45fa68ce91c107be9a)
+
+:white_check_mark: 4.5 wymaganie 4 [Link do commita 4](https://github.com/YehorSavchenko/E-Biznes/commit/1a6f3d0b342b90cb4e194a45fa68ce91c107be9a)
+
+Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/blob/master/.github/workflows/deploy.yml)
+
+Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/Cloud.mp4)
