@@ -58,6 +58,5 @@ jobs:
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Build Notification
           body: The application has been successfully built and Docker images have been pushed.
-          to: recipient@example.com
+          to: ${{ secrets.EMAIL_USERNAME }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          tls: true
