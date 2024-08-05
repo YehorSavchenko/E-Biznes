@@ -134,3 +134,5 @@ Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Bot)
 Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/bot.mp4)
 
 **Zadanie 10** Cloud
+
+:white_check_mark: 3.0 wymaganie 1
