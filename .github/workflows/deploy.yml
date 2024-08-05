@@ -31,8 +31,8 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t my-backend-image:latest ./Oauth2/oauth2-server
-          docker build -t my-frontend-image:latest ./Oauth2/oauth2-client
+          docker build -t yehorsavchenko/my-backend-image:latest ./Oauth2/oauth2-server
+          docker build -t yehorsavchenko/my-frontend-image:latest ./Oauth2/oauth2-client
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -42,8 +42,8 @@ jobs:
 
       - name: Push Docker images
         run: |
-          docker push my-backend-image:latest
-          docker push my-frontend-image:latest
+          docker push yehorsavchenko/my-backend-image:latest
+          docker push yehorsavchenko/my-frontend-image:latest
 
   notify:
     runs-on: ubuntu-latest
