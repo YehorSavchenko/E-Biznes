@@ -132,3 +132,5 @@ Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/oauth2
 Kod: [Folder](https://github.com/YehorSavchenko/E-Biznes/tree/master/Bot)
 
 Demo: [Demo](https://github.com/YehorSavchenko/E-Biznes/blob/master/demos/bot.mp4)
+
+**Zadanie 10** Cloud
